@@ -8,9 +8,9 @@ Small [static html page](https://qchenevier.github.io/animate_graphviz/) to anim
 ### User interface
 
 - Go to https://qchenevier.github.io/animate_graphviz/
-- Load your `dot` file in the page using the <button name="button">Choose file</button> button
-- Animate your graph step by step thanks to the <button name="button">Next step</button> and <button name="button">Restart animation</button> buttons
-- At any time you can save the `svg` rendering using the <button name="button">Save SVG</button> button
+- Load your `dot` file in the page using the `Choose file` button
+- Animate your graph step by step thanks to the `Next step` and `Restart animation` buttons
+- At any time you can save the `svg` rendering using the `Save SVG` button
 
 
 > ☝️ The frame size of the `svg` is approximately the window size when the `svg` is rendered. If the `svg` frame is too small or too big, resize the browser window and restart the animation.
