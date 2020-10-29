@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<body>
+<script src="https://unpkg.com/d3@5.7.0/dist/d3.min.js"></script>
+<script src="https://unpkg.com/@hpcc-js/wasm@0.3.11/dist/index.min.js"></script>
+<script src="https://unpkg.com/d3-graphviz@3.0.5/build/d3-graphviz.js"></script>
+<div>
+  <input type="file" id="file-input" />
+</div>
+<div>
+  <button type="button" onclick="renderNext()">Next step</button>
+  <button type="button" onclick="restart()">Restart animation</button>
+  <button type="button" onclick="save()">Save SVG</button>
+  <span id="stepNumber"></span>
+</div>
+<!-- <div> -->
+<div id="graph" style="text-align: left;"></div>
+<!-- </div> -->
+<script>
+
+var stepNumber = 0;
+
+function replaceAnimateTokens(string, stepNumber) {
+  function rangeToNumberArray(rangeString) {
+    const [begin, end] = rangeString.split("-").map(Number)
+    function range(start, stop, step = 1) {
+      return Array(Math.ceil((1 + stop - start) / step))
+        .fill(start)
+        .map((x, y) => x + y * step)
+    }
+    return end ? range(begin, end) : [begin]
+  }
+  function convertToStepNumbers(match) {
+    return match
+      .split("=")[1]
+      .replaceAll(/"/g, "")
+      .replaceAll(/\s/g, "")
+      .replaceAll(/\n/g, "")
+      .split(",")
+      .map(rangeToNumberArray)
+      .reduce((accumulator, array) => accumulator.concat(array), [])
+  }
+  var pattern = /\s*animate="[0-9\-\,]+"/g
+  function patternMatchToStyle(patternMatch) {
+    leadingWhitespaces = patternMatch.match(/^\s*/)[0]
+    return convertToStepNumbers(patternMatch).includes(stepNumber)
+      ? ""
+      : `${leadingWhitespaces}style=invis`
+  }
+  return string.replaceAll(pattern, patternMatchToStyle)
+}
+
+function renderNext() {
+  margin = 20
+  var width = window.innerWidth - margin;
+  var height = window.innerHeight - margin - 40;
+  graphviz
+    .width(width)
+    .height(height)
+    .renderDot(replaceAnimateTokens(dots, stepNumber))
+    .on("end", function () {
+        console.log("stepNumber:", stepNumber)
+        document.getElementById("stepNumber").innerText = `Step number: ${stepNumber}`
+        stepNumber += 1;
+    })
+}
+
+var graphviz = d3.select("#graph").graphviz()
+  .logEvents(true)
+
+var dots
+function readSingleFile(e) {
+  var file = e.target.files[0];
+  if (!file) {
+    return;
+  }
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    this.dots = e.target.result;
+    window.dots = this.dots
+    renderNext()
+  };
+  reader.readAsText(file);
+}
+
+function restart() {
+  console.log("restart")
+  stepNumber = 0
+  renderNext()
+}
+
+function save() {
+  var data = document.getElementById("graph").children[0].outerHTML
+  var filename = `graph_${String(stepNumber - 1).padStart(2, "0")}.svg`
+  var type = "image/svg+xml"
+  // var type = "image/svg+xml;charset=utf-8"
+  var file = new Blob([data], {type: type})
+  if (window.navigator.msSaveOrOpenBlob) // IE10+
+    window.navigator.msSaveOrOpenBlob(file, filename)
+  else { // Others
+    var a = document.createElement("a")
+    var url = URL.createObjectURL(file)
+    a.href = url
+    a.download = filename
+    document.body.appendChild(a)
+    a.click()
+    setTimeout(function() {
+        document.body.removeChild(a)
+        window.URL.revokeObjectURL(url)
+    }, 0)
+  }
+}
+
+document.getElementById('file-input')
+  .addEventListener('change', readSingleFile, false);
+
+</script>
