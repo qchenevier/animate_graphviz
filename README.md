@@ -1,12 +1,13 @@
 # Animated Graphviz
 
-Small static html page to animate a [Graphviz](https://graphviz.org/) `dot` file, based on [d3-graphviz](https://github.com/magjac/d3-graphviz).
+Small [static html page](https://qchenevier.github.io/animate_graphviz/) to animate a [Graphviz](https://graphviz.org/) `dot` file, based on [d3-graphviz](https://github.com/magjac/d3-graphviz).
 
 
 ## Usage
 
 ### User interface
 
+- Go to https://qchenevier.github.io/animate_graphviz/
 - Load your `dot` file in the page using the <button name="button">Choose file</button> button
 - Animate your graph step by step thanks to the <button name="button">Next step</button> and <button name="button">Restart animation</button> buttons
 - At any time you can save the `svg` rendering using the <button name="button">Save SVG</button> button
