@@ -9,7 +9,7 @@ Small [static html page](https://qchenevier.github.io/animate_graphviz/) to anim
 
 - Go to https://qchenevier.github.io/animate_graphviz/
 - Load your `dot` file in the page using the `Choose file` button
-- Animate your graph step by step thanks to the `Next step` and `Restart animation` buttons
+- Animate your graph step by step thanks to the `Previous step`, `Next step` and `Restart animation` buttons
 - At any time you can save the `svg` rendering using the `Save SVG` button
 
 

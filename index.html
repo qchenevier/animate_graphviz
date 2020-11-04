@@ -8,6 +8,7 @@
   <input type="file" id="file-input" />
 </div>
 <div>
+  <button type="button" onclick="renderPrevious()">Previous step</button>
   <button type="button" onclick="renderNext()">Next step</button>
   <button type="button" onclick="restart()">Restart animation</button>
   <button type="button" onclick="save()">Save SVG</button>
@@ -50,7 +51,8 @@ function replaceAnimateTokens(string, stepNumber) {
   return string.replaceAll(pattern, patternMatchToStyle)
 }
 
-function renderNext() {
+
+function render() {
   margin = 20
   var width = window.innerWidth - margin;
   var height = window.innerHeight - margin - 40;
@@ -61,8 +63,17 @@ function renderNext() {
     .on("end", function () {
         console.log("stepNumber:", stepNumber)
         document.getElementById("stepNumber").innerText = `Step number: ${stepNumber}`
-        stepNumber += 1;
     })
+}
+
+function renderNext() {
+  stepNumber += 1;
+  render()
+}
+
+function renderPrevious() {
+  stepNumber -= 1;
+  render()
 }
 
 var graphviz = d3.select("#graph").graphviz()
@@ -78,7 +89,7 @@ function readSingleFile(e) {
   reader.onload = function(e) {
     this.dots = e.target.result;
     window.dots = this.dots
-    renderNext()
+    restart()
   };
   reader.readAsText(file);
 }
@@ -86,12 +97,12 @@ function readSingleFile(e) {
 function restart() {
   console.log("restart")
   stepNumber = 0
-  renderNext()
+  render()
 }
 
 function save() {
   var data = document.getElementById("graph").children[0].outerHTML
-  var filename = `graph_${String(stepNumber - 1).padStart(2, "0")}.svg`
+  var filename = `graph_${String(stepNumber).padStart(2, "0")}.svg`
   var type = "image/svg+xml"
   // var type = "image/svg+xml;charset=utf-8"
   var file = new Blob([data], {type: type})
